@@ -20,8 +20,12 @@ import com.example.nhadat_app.DB.SQLiteDatabase;
 import com.example.nhadat_app.Model.TinDang;
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +78,7 @@ public class Admin extends AppCompatActivity implements View.OnClickListener {
                     as.getString("timeUp")));
         }
         re.setLayoutManager(new LinearLayoutManager(this));
-        adapter=new ListAdapter(ar, this);
+        adapter=new ListAdapter(ar, this, ParseUser.getCurrentUser());
         re.setAdapter(adapter);
     }
 

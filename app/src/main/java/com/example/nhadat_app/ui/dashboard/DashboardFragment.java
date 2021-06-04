@@ -127,8 +127,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
 
         //set lisstener
         setListener();
-        category=db.getTK();
-        if(category.equalsIgnoreCase("yes")==true){
+        if(ParseUser.getCurrentUser()!=null){
             re_1.setVisibility(View.GONE);
             re_2.setVisibility(View.VISIBLE);
         }
@@ -247,6 +246,16 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         });
     }
 
+    //adpater recycle
+    private void initTodoList(List<ParseObject> ls, Button btn) {
+        for(ParseObject as:ls){
+            list.add(new province(String.valueOf(as.getInt("code")), as.getString("name")));
+        }
+        re.setLayoutManager(new LinearLayoutManager(getContext()));
+        provin=new ListProvincesAdapter(getContext(), list, btn, lj, scr);
+        re.setAdapter(provin);
+    }
+
     //get distin
     private void getDataDistin(String table, String name, Button btn){
         lj.setVisibility(View.VISIBLE);
@@ -347,15 +356,7 @@ public class DashboardFragment extends Fragment implements View.OnClickListener 
         re.setAdapter(ward);
     }
 
-    //adpater recycle
-    private void initTodoList(List<ParseObject> ls, Button btn) {
-        for(ParseObject as:ls){
-            list.add(new province(String.valueOf(as.getInt("code")), as.getString("name")));
-        }
-        re.setLayoutManager(new LinearLayoutManager(getContext()));
-        provin=new ListProvincesAdapter(getContext(), list, btn, lj, scr);
-        re.setAdapter(provin);
-    }
+
 
     //chon image
     private void chooseImage(int pick){

@@ -31,7 +31,6 @@ public class ImageAdapter extends SliderViewAdapter<ImageAdapter.SliderAdapterVi
     public void onBindViewHolder(SliderAdapterViewHolder viewHolder, int position) {
         final ImageSlide sliderItem = list.get(position);
 
-        //Glide is use to load image from url in your imageview.
         Glide.with(viewHolder.itemView)
                 .load(sliderItem.getUrl())
                 .fitCenter()
@@ -44,7 +43,6 @@ public class ImageAdapter extends SliderViewAdapter<ImageAdapter.SliderAdapterVi
     }
 
     static class SliderAdapterViewHolder extends SliderViewAdapter.ViewHolder {
-        //Adapter class for initializing the views of our slider view.
         View itemView;
         ImageView imageViewBackground;
 

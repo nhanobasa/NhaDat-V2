@@ -43,7 +43,7 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChangeProfile extends AppCompatActivity implements View.OnClickListener {
+public class ChangeProfile extends AppCompatActivity implements View.OnClickListener{
     private ImageButton btnBack;
     private Button btnCapNhat, txtDate;
     private Spinner sp;

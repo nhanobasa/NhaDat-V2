@@ -7,8 +7,11 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,10 +44,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.listA> {
     private ArrayList<TinDang> list;
     private Context context;
-
-    public ListAdapter(ArrayList<TinDang> list, Context context) {
+    private ParseUser as;
+    public ListAdapter(ArrayList<TinDang> list, Context context, ParseUser as) {
         this.list = list;
         this.context = context;
+        this.as=as;
     }
 
     @Override
@@ -65,7 +69,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.listA> {
         else if(a.getGia()/1000000000>0){
             holder.gia.setText((long)a.getGia()/1000000000+" tỉ");
         }
-        holder.username.setText(a.getUserName());
         Picasso.get().load(a.getImg1()).into(holder.img);
 
         String s=Calendar.getInstance().getTime()+"";
@@ -104,13 +107,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.listA> {
         if(kq<=59){
             holder.thoigian.setText(kq+" phút trước");
         }
-        else{
-            if(kq/60>0 && kq/60<=59){
+        else if(kq>59){
+            if(kq/60>0 && kq/60<=23){
                 holder.thoigian.setText((long) kq/60+" giờ trước");
             }
-            else{
-                if(kq/(60*24) > 0 && kq/(60*24) <=23){
-                    holder.thoigian.setText((long)kq/(60*24)+" ngày trước");
+            else if(kq/60>23){
+                {
+                    if(kq/(60*24) > 0 && kq/(60*24) <=30){
+                        holder.thoigian.setText((long)kq/(60*24)+" ngày trước");
+                    }
+                    else{
+                        holder.thoigian.setText((long)kq/(60*24*30)+" tháng trước");
+                    }
                 }
             }
         }
@@ -120,11 +128,29 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.listA> {
             if(e==null){
                 for(ParseUser as:objects){
                     Picasso.get().load(Uri.parse(as.getString("imgurl"))).into(holder.imgprofile);
+                    holder.username.setText(as.getString("fullname"));
                 }
             }
         }));
 
 
+        if(as==null){
+            holder.save.setImageResource(R.drawable.heart_20px);
+        }
+        else{
+            ParseQuery<ParseObject> query1=ParseQuery.getQuery("SavePostin");
+            query1.whereEqualTo("username", as.getUsername());
+            query1.findInBackground(((objects, e) -> {
+                if(e==null){
+                    for(ParseObject ass:objects){
+                        if(ass.getString("tinDang").equalsIgnoreCase(a.getIdl())==true){
+                            holder.save.setImageResource(R.drawable.heart1_20px);
+                            holder.save.setTag("success");
+                        }
+                    }
+                }
+            }));
+        }
     }
 
     @Override
@@ -143,6 +169,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.listA> {
         private TextView username;
         private TextView thoigian;
         private TextView diaChi;
+        private ImageButton save;
         public listA(@NonNull @NotNull View itemView) {
             super(itemView);
             img=itemView.findViewById(R.id.card_img);
@@ -152,6 +179,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.listA> {
             imgprofile=itemView.findViewById(R.id.card_profile);
             username=itemView.findViewById(R.id.card_username);
             diaChi=itemView.findViewById(R.id.card_add);
+            save=itemView.findViewById(R.id.save);
+            save.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -159,19 +188,65 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.listA> {
         public void onClick(View v) {
             int pro=getLayoutPosition();
             TinDang a=list.get(pro);
-            ParseQuery<ParseObject> query=ParseQuery.getQuery("postin");
-            query.getInBackground(a.getIdl(), ((object, e) -> {
-                if(e==null){
-                    object.put("luotxem", a.getLuotxem()+1);
-                    object.saveInBackground(e1 -> {
-                        Intent as=new Intent(context, TTTinDang.class);
-                        as.putExtra("object", a.toString());
-                        as.putExtra("type", "yes");
-                        context.startActivity(as);
+            if(v.getId()==R.id.save){
+                if(as==null){
+                    Toast.makeText(context, "Đăng nhập trước khi thực hiện lưu tin", Toast.LENGTH_LONG).show();
+                }
+                else if(as.getUsername().equalsIgnoreCase(a.getUserName())==true){
+                    Toast.makeText(context, "Đây là tin đăng của bạn", Toast.LENGTH_LONG).show();
+                }
+                else if(save.getTag()!=null && save.getTag().equals("success")==true) {
+                    ParseQuery<ParseObject> query1 = ParseQuery.getQuery("SavePostin");
+                    query1.whereEqualTo("username", as.getUsername());
+                    query1.findInBackground(((objects, e) -> {
+                        if (e == null) {
+                            for (ParseObject ass : objects) {
+                                if (ass.getString("tinDang").equalsIgnoreCase(a.getIdl()) == true) {
+                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("SavePostin");
+                                    query.getInBackground(ass.getObjectId(), (objecta, e1) -> {
+                                        if (e1 == null) {
+                                            objecta.deleteInBackground((e2 -> {
+                                                if (e2 == null) {
+                                                    Toast.makeText(context, "Hủy thành công", Toast.LENGTH_LONG).show();
+                                                    save.setImageResource(R.drawable.heart_20px);
+                                                }
+                                            }));
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }));
+                }
+                else{
+                    ParseObject object=new ParseObject("SavePostin");
+                    object.put("username", as.getUsername());
+                    object.put("tinDang", a.getIdl());
+
+                    object.saveInBackground(e -> {
+                        if(e==null){
+                            save.setImageResource(R.drawable.heart1_20px);
+                            save.setTag("success");
+                            Toast.makeText(context, "Lưu thành công", Toast.LENGTH_LONG).show();
+                        }
                     });
                 }
-            }));
-
+            }
+            else{
+                ParseQuery<ParseObject> query=ParseQuery.getQuery("postin");
+                query.getInBackground(a.getIdl(), ((object, e) -> {
+                    if(e==null){
+                        object.put("luotxem", a.getLuotxem()+1);
+                        object.saveInBackground(e1 -> {
+                            Intent as=new Intent(context, TTTinDang.class);
+                            as.putExtra("object", a.toString());
+                            as.putExtra("type", "yes");
+                            context.startActivity(as);
+                        });
+                    }
+                }));
+            }
         }
     }
+
 }

@@ -19,6 +19,7 @@ import com.example.nhadat_app.fragmentmanager.ViewPagerAdapter;
 import com.example.nhadat_app.databinding.FragmentNotificationsBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class NotificationsFragment extends Fragment implements View.OnClickListener {
     private FragmentNotificationsBinding binding;
@@ -50,15 +51,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
 
         ///check dang nhap
         setListener();
-        category=db.getTK();
-        if(category.equalsIgnoreCase("yes")==true){
-            li1.setVisibility(View.GONE);
-            ln2.setVisibility(View.VISIBLE);
-        }
-        else{
-            li1.setVisibility(View.VISIBLE);
-            ln2.setVisibility(View.GONE);
-        }
+        checkAccount();
 
         return root;
     }
@@ -68,6 +61,17 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         btn.setOnClickListener(this);
     }
 
+    //check account
+    private void checkAccount(){
+        if(ParseUser.getCurrentUser()!=null){
+            li1.setVisibility(View.GONE);
+            ln2.setVisibility(View.VISIBLE);
+        }
+        else{
+            li1.setVisibility(View.VISIBLE);
+            ln2.setVisibility(View.GONE);
+        }
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

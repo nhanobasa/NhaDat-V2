@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.nhadat_app.ImageSlider.ImageAdapter;
@@ -30,10 +31,11 @@ public class TTTinDang extends AppCompatActivity implements View.OnClickListener
     private ImageButton btnBack;
     private TextView txtTittle, txtAd, txtGia, txtDienTich, txtMota, txtHuongNha, txtPhapLy
             ,txtUsername;
-    private Button btnUpdate, btnPhone, btnSms;
+    private Button btnUpdate, btnPhone, btnSms, btnViwe;
     private CircleImageView imgUser;
     private SliderView sliderView;
     private LinearLayout ln;
+    private RatingBar rd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,7 @@ public class TTTinDang extends AppCompatActivity implements View.OnClickListener
 
     private void setID(){
         btnBack=findViewById(R.id.tt_btnback);
-        btnUpdate=findViewById(R.id.tt_btnSua);
+        rd=findViewById(R.id.tt_rating);
         txtTittle=findViewById(R.id.tt_tittle);
         txtAd=findViewById(R.id.tt_diachia);
         txtDienTich=findViewById(R.id.tt_dt);
@@ -60,10 +62,11 @@ public class TTTinDang extends AppCompatActivity implements View.OnClickListener
         btnPhone=findViewById(R.id.tindang_phone);
         btnSms=findViewById(R.id.tindang_sms);
         ln=findViewById(R.id.ln2);
+        btnViwe=findViewById(R.id.btnViewProfile);
     }
 
     private void setListener(){
-        btnUpdate.setOnClickListener(this);
+        btnViwe.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         btnPhone.setOnClickListener(this);
         btnSms.setOnClickListener(this);
@@ -74,7 +77,6 @@ public class TTTinDang extends AppCompatActivity implements View.OnClickListener
             Intent a=getIntent();
             String s=a.getStringExtra("type");
             if(s.equalsIgnoreCase("yes")==true){
-                btnUpdate.setVisibility(View.GONE);
                 ln.setVisibility(View.VISIBLE);
             }
         }catch (NullPointerException e){
@@ -95,7 +97,7 @@ public class TTTinDang extends AppCompatActivity implements View.OnClickListener
         sliderDataArrayList.add(new ImageSlide(tinDang.getImg1()));
         sliderDataArrayList.add(new ImageSlide(tinDang.getImg2()));
         ImageSlideTT adapter = new ImageSlideTT(this, sliderDataArrayList);
-        sliderView.setAutoCycleDirection(SliderView.LAYOUT_DIRECTION_LTR);
+//        sliderView.setAutoCycleDirection(SliderView.LAYOUT_MODE_CLIP_BOUNDS);
         sliderView.setSliderAdapter(adapter);
         sliderView.setScrollTimeInSec(3);
         sliderView.setAutoCycle(true);
@@ -111,7 +113,6 @@ public class TTTinDang extends AppCompatActivity implements View.OnClickListener
         }
 
         txtAd.setText(tinDang.getXa()+", "+tinDang.getHuyen()+", "+tinDang.getTinh());
-        txtUsername.setText(tinDang.getUserName());
         txtPhapLy.setText(tinDang.getPhapLy());
         txtDienTich.setText(tinDang.getDienTich()+" m2");
         txtMota.setText(tinDang.getMoTa());
@@ -124,22 +125,45 @@ public class TTTinDang extends AppCompatActivity implements View.OnClickListener
             if(e==null){
                 for(ParseUser as:objects){
                     Picasso.get().load(Uri.parse(as.getString("imgurl"))).into(imgUser);
+                    txtUsername.setText(as.getString("fullname"));
                 }
             }
         }));
 
+        ParseQuery<ParseObject> query1=ParseQuery.getQuery("rating");
+        query1.whereEqualTo("namepost", tinDang.getUserName());
+        query1.findInBackground(((objects, e) -> {
+            if(e==null){
+                calculatorRate(objects,rd);
+            }
+        }));
+    }
+
+    private void calculatorRate(List<ParseObject> list,RatingBar rd){
+        float diem=0;
+        for(ParseObject as:list){
+            diem+=as.getDouble("rate");
+        }
+        rd.setRating(diem/list.size());
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.tt_btnback:{
-                finish();
+            case R.id.btnViewProfile:{
+                Intent a=getIntent();
+                String s=a.getStringExtra("object");
+                String[] arr=s.split("noikho");
+                TinDang tinDang=new TinDang(arr[0], arr[1], arr[2], arr[3], arr[4], Integer.parseInt(arr[5]),
+                        Long.parseLong(arr[6]), arr[7], arr[8], arr[9], arr[10], Integer.parseInt(arr[11]),
+                        Uri.parse(arr[12]), Uri.parse(arr[13]));
+                Intent as=new Intent(this, ViewProfile.class);
+                as.putExtra("name", tinDang.getUserName());
+                startActivity(as);
                 break;
             }
-            case R.id.tt_btnSua:{
-                Intent a=new Intent(this, UpdateItem.class);
-                startActivity(a);
+            case R.id.tt_btnback:{
+                finish();
                 break;
             }
             case R.id.tindang_phone:{

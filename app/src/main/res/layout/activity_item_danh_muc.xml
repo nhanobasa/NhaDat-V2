@@ -23,21 +23,175 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:paddingLeft="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_gravity="center_vertical"
-        android:layout_height="35dp">
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:drawableLeft="@drawable/address_17px"
-            android:text="Khu vực: "
-            android:gravity="center"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:id="@+id/linear_filter"
+        >
+        <Button
+            android:layout_width="120dp"
+            android:layout_marginTop="5dp"
+            android:textSize="10dp"
+            android:layout_height="35dp"
+            android:id="@+id/filter_back"
+            android:text="Trờ về"
+            android:layout_gravity="left"
             />
-        <Spinner
-            android:layout_width="140dp"
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:id="@+id/crolls"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/filter_ds"
+            android:visibility="gone"
+            android:background="@color/white"
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/recycle_filterds"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            >
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:text="Tỉnh/thành phố: "
+                android:fontFamily="@font/font1"
+                android:textSize="11dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_marginRight="15dp"
+                />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:id="@+id/filter_tinhthanh"
+                android:background="@drawable/textprofile"
+                android:fontFamily="@font/font1"
+                android:textColor="@color/black"
+                android:textSize="11dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            >
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:text="Danh mục: "
+                android:fontFamily="@font/font1"
+                android:textSize="11dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_marginRight="15dp"
+                />
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:id="@+id/filter_danhmuc"
+                android:background="@drawable/textprofile"
+                android:fontFamily="@font/font1"
+                android:textColor="@color/black"
+                android:textSize="11dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            >
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:text="Sắp xếp: "
+                android:fontFamily="@font/font1"
+                android:textSize="11dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_marginRight="15dp"
+                />
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:id="@+id/filter_sapxep"
+                android:background="@drawable/textprofile"
+                android:fontFamily="@font/font1"
+                android:textColor="@color/black"
+                android:textSize="11dp"
+                />
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:id="@+id/sp_itemkhuvuc"
+            android:text="Giá: "
+            android:fontFamily="@font/font1"
+            android:textSize="11dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:text="Từ: "
+                android:textSize="11dp"
+                android:gravity="center_vertical"
+                android:fontFamily="@font/font1"
+                />
+            <EditText
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:id="@+id/txt_gia1"
+                android:textSize="11dp"
+                android:background="@drawable/textprofile"
+                android:inputType="number"
+                />
+            <TextView
+                android:layout_marginLeft="15dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:text="Đến: "
+                android:textSize="11dp"
+                android:gravity="center_vertical"
+                android:fontFamily="@font/font1"
+                />
+            <EditText
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:id="@+id/txt_gia2"
+                android:textSize="11dp"
+                android:background="@drawable/textprofile"
+                android:inputType="number"
+                />
+
+        </LinearLayout>
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:id="@+id/filter_accept"
+            android:text="Lọc"
+            android:textSize="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="left"
             />
     </LinearLayout>
     <LinearLayout
@@ -47,48 +201,17 @@
         android:layout_gravity="center_vertical"
         android:paddingLeft="20dp"
         >
-       <TextView
-           android:layout_width="40dp"
-           android:layout_height="30dp"
-           android:text="Từ: "
-           android:fontFamily="@font/font1"
-           />
-        <EditText
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:id="@+id/txt_gia1"
-            android:textSize="11dp"
-            android:background="@drawable/textprofile"
-            android:inputType="number"
-            />
-        <TextView
-            android:layout_marginLeft="15dp"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
-            android:text="Đến: "
-            android:fontFamily="@font/font1"
-            />
-        <EditText
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:id="@+id/txt_gia2"
-            android:textSize="11dp"
-            android:background="@drawable/textprofile"
-            android:inputType="number"
-            />
         <Button
-            android:layout_width="75dp"
-            android:layout_marginLeft="5dp"
-            android:layout_height="30dp"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
             android:paddingLeft="8dp"
-            android:background="@drawable/border"
-            android:drawableLeft="@drawable/filter_18px"
+            android:drawableLeft="@drawable/filter_16px"
             android:text="Lọc"
-            android:textSize="12dp"
+            android:textSize="10dp"
             android:id="@+id/btn_filter"
-            android:fontFamily="@font/font1"
             />
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

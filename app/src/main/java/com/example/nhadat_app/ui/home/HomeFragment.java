@@ -27,6 +27,7 @@ import com.example.nhadat_app.databinding.FragmentHomeBinding;
 import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.smarteist.autoimageslider.SliderView;
 
 import java.util.ArrayList;
@@ -69,6 +70,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         ParseQuery<ParseObject> query=ParseQuery.getQuery("postin");
         query.setLimit(2000);
         query.whereEqualTo("tinhtrang","duyệt");
+        query.orderByDescending("luotxem");
         query.findInBackground(((objects, e) -> {
             if(e==null){
                 setAdapter(objects);
@@ -90,7 +92,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     as.getString("timeUp")));
         }
         re.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter=new com.example.nhadat_app.Adapter.ListAdapter(tinDangs, getContext());
+        adapter=new com.example.nhadat_app.Adapter.ListAdapter(tinDangs, getContext(), ParseUser.getCurrentUser());
         re.setAdapter(adapter);
     }
 

@@ -256,7 +256,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         DatePickerDialog a=new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                txtDate.setText(year+"/"+month+"/"+dayOfMonth);
+                txtDate.setText(year+"/"+(month+1)+"/"+dayOfMonth);
             }
         }, year, month, day);
         a.show();

@@ -35,6 +35,7 @@ import com.example.nhadat_app.databinding.ActivityMainBinding;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -116,6 +117,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .clientKey(getString(R.string.back4app_client_key))
                 .server(getString(R.string.back4app_server_url))
                 .build());
+
+//        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//        installation.put("GCMSenderId", "267196795826");
+//        installation.saveInBackground((e -> {
+//            if(e!=null){
+//                Toast.makeText(this, "loi "+e.getMessage(),Toast.LENGTH_LONG).show();
+//            }
+//        }));
+
+        if(ParseUser.getCurrentUser()!=null){
+            final ArrayList<String> channels = new ArrayList<>();
+            channels.add(ParseUser.getCurrentUser().getUsername());
+            channels.add(ParseUser.getCurrentUser().getUsername()+"tindang");
+            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+            installation.put("GCMSenderId", "267196795826");
+            installation.put("channels", channels);
+            installation.saveInBackground();
+        }
     }
 
     //su kien
@@ -171,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         as.getString("timeUp")));
             }
         }
-        adapter=new com.example.nhadat_app.Adapter.ListAdapter(tinDangs, MainActivity.this);
+        adapter=new com.example.nhadat_app.Adapter.ListAdapter(tinDangs, MainActivity.this, ParseUser.getCurrentUser());
         re.setLayoutManager(new LinearLayoutManager(this));
         re.setAdapter(adapter);
         adapter.notifyDataSetChanged();

@@ -131,7 +131,7 @@ public class UpdateItem extends AppCompatActivity implements View.OnClickListene
         System.out.println(s);
         String[] arr=s.split("noikho");
         TinDang tinDang=new TinDang(arr[14],arr[0], arr[1], arr[2], arr[3], arr[4], Integer.parseInt(arr[5]),
-                Integer.parseInt(arr[6]), arr[7], arr[8], arr[9], arr[10], Integer.parseInt(arr[11]),
+                Long.parseLong(arr[6]), arr[7], arr[8], arr[9], arr[10], Integer.parseInt(arr[11]),
                 Uri.parse(arr[12]), Uri.parse(arr[13]));
         Picasso.get().load(tinDang.getImg1()).into(im1);
         Picasso.get().load(tinDang.getImg2()).into(img2);

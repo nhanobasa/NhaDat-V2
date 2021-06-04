@@ -193,7 +193,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/list_pro"
-                android:id="@+id/recycle_tin"
+                android:id="@+id/recycle_tinluu"
                 android:layout_marginTop="10dp"
                 />
         </RelativeLayout>

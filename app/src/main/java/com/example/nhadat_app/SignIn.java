@@ -106,7 +106,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
             // button đăng ký
             case R.id.btnSigUp:{
                 Intent b=getIntent();
-                if(b.getStringExtra("activity").equalsIgnoreCase("dantin")==true){
+                if(b.getStringExtra("activity").equalsIgnoreCase("dangtin")==true){
                     Intent a=new Intent(SignIn.this, SignUp.class);
                     a.putExtra("activity", "dangtin");
                     startActivity(a);

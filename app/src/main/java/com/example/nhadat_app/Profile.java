@@ -1,6 +1,8 @@
 package com.example.nhadat_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,9 +13,16 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.nhadat_app.Adapter.ListAdapter;
 import com.example.nhadat_app.DB.SQLiteDatabase;
+import com.example.nhadat_app.Model.TinDang;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -26,6 +35,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private SQLiteDatabase db;
     private String category="";
     private CircleImageView img;
+    private RecyclerView re;
+    private ListAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +45,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         setID();
         setListener();
         db=new SQLiteDatabase(this);
-        category=db.getTK();
-        if(category.equalsIgnoreCase("No")==true){
+        setViewData();
+        if(ParseUser.getCurrentUser()==null){
             re_1.setVisibility(View.GONE);
             re_2.setVisibility(View.VISIBLE);
         }
@@ -72,6 +83,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         re_1=findViewById(R.id.re_btnchange);
         img=findViewById(R.id.image_profilee);
         re_2=findViewById(R.id.re_buttonsign);
+        re=findViewById(R.id.recycle_tinluu);
 
     }
 
@@ -86,6 +98,44 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     protected void onStart() {
         super.onStart();
 
+    }
+
+    private void setViewData(){
+        if(ParseUser.getCurrentUser()!=null){
+            ParseQuery<ParseObject> query=ParseQuery.getQuery("SavePostin");
+            query.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+            query.findInBackground(((objects, e) -> {
+                if(e==null){
+                    for(ParseObject as:objects){
+                        ParseQuery<ParseObject> query1=ParseQuery.getQuery("postin");
+                        query1.whereEqualTo("objectId", as.getString("tinDang"));
+                        query1.findInBackground(((objects1, e1) -> {
+                            if(e1==null){
+                                setView(objects1);
+                            }
+                        }));
+                    }
+                }
+            }));
+        }
+    }
+
+    private void setView(List<ParseObject> list){
+        ArrayList<TinDang> tinDangs=new ArrayList<>();
+        for(ParseObject as:list){
+            tinDangs.add(new com.example.nhadat_app.Model.TinDang(as.getObjectId(),as.getString("name"),
+                    as.getString("danhmuc"), as.getString("tinh"),
+                    as.getString("huyen"), as.getString("xa"),
+                    Integer.parseInt(as.getString("dientich")),
+                    Long.parseLong(as.getString("gia")), as.getString("phaply"),
+                    as.getString("huongnha"), as.getString("tittle"),
+                    as.getString("mota"), as.getInt("luotxem"),
+                    Uri.parse(as.getString("img1")), Uri.parse(as.getString("img2")),
+                    as.getString("timeUp")));
+        }
+        re.setLayoutManager(new LinearLayoutManager(this));
+        adapter=new com.example.nhadat_app.Adapter.ListAdapter(tinDangs, this, ParseUser.getCurrentUser());
+        re.setAdapter(adapter);
     }
 
     @Override
@@ -105,13 +155,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
             case R.id.chage_signin:{
                 Intent a=new Intent(this, SignIn.class);
                 a.putExtra("activity", "profile");
-                a.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(a);
                 break;
             }
             case R.id.profile_signup:{
                 Intent a=new Intent(this, SignUp.class);
-                a.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 a.putExtra("activity", "profile");
                 startActivity(a);
                 break;

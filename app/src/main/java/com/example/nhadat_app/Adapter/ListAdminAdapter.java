@@ -20,10 +20,13 @@ import com.example.nhadat_app.R;
 import com.example.nhadat_app.TTTinDang;
 import com.example.nhadat_app.UpdateItem;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -93,6 +96,18 @@ public class ListAdminAdapter extends RecyclerView.Adapter<ListAdminAdapter.tinD
                             if(e1==null){
                                 list.remove(list.get(pro));
                                 notifyDataSetChanged();
+                                JSONObject data=new JSONObject();
+                                try {
+                                    data.put("alert", "Tin đăng "+as.getTieuDe()+" được duyệt thành công");
+                                    data.put("title", "Nhà đất");
+                                } catch (JSONException es) {
+                                    throw new IllegalArgumentException("unexpected parsing error", es);
+                                }
+
+                                ParsePush push = new ParsePush();
+                                push.setChannel(as.getUserName()+"tindang");
+                                push.setData(data);
+                                push.sendInBackground();
                             }
                         });
                     }
